@@ -24,7 +24,7 @@ public class Main {
         String str7 = "Test7";
 
         LOGGER.info(LocalDateTime.now() + " : Creating instance of 2 level caching system");
-        CachingSystem<Integer, String> cachingSystem = new CachingSystem<>(1, Strategies.LEAST_RECENTLY_USED.name());
+        CachingSystem<Integer, String> cachingSystem = new CachingSystem<>(2, Strategies.LEAST_FREQUENTLY_USED.name());
 
         cachingSystem.cache(0, str0);
 
