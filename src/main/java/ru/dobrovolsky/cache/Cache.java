@@ -1,12 +1,9 @@
 package ru.dobrovolsky.cache;
 
 import java.io.IOException;
-import java.util.Map;
 
 public interface Cache<K, V> {
     void cache(K key, V value) throws IOException;
-
-    void cacheAll(Map<? extends K, ? extends V> map);
 
     V extract(K key);
 
@@ -17,4 +14,8 @@ public interface Cache<K, V> {
     void clear() throws IOException;
 
     int size();
+
+    void printCache();
+
+    boolean isFull();
 }

@@ -4,41 +4,44 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.dobrovolsky.cache.Cache;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MemoryCache<K, V> implements Cache<K, V> {
+public class MemoryCache<K extends Serializable, V extends Serializable> implements Cache<K, V> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemoryCache.class);
-    private final static int DEFAULT_CACHE_SIZE = 10;
+    private static final int DEFAULT_CACHE_SIZE = 10;
 
-    private final Map<K, V> storage;
+    private Map<K, V> storage;
+    private final int cacheSize;
 
     public MemoryCache() {
-        this.storage = new ConcurrentHashMap<>(DEFAULT_CACHE_SIZE);
+        this.cacheSize = DEFAULT_CACHE_SIZE;
+        this.storage = new ConcurrentHashMap<>(this.cacheSize);
     }
 
     public MemoryCache(int cacheSize) {
-        this.storage = new HashMap<>(cacheSize);
+        this.cacheSize = cacheSize;
+        this.storage = new ConcurrentHashMap<>(this.cacheSize);
     }
 
     @Override
-    public void cache(K key, V value) {
-        LOGGER.info(LocalDateTime.now() + " : Trying to cache object: " + key);
-        storage.put(key, value);
+    public synchronized void cache(K key, V value) {
+        LOGGER.info(LocalDateTime.now() + " : Trying to cache object: " + key + " to 1 level cache");
+        if (storage.size() < cacheSize) {
+            storage.put(key, value);
+            return;
+        }
+
+        LOGGER.info(LocalDateTime.now() + " : 1 level cache:    " + this.getClass().getSimpleName()
+                + " is full, need to reCache");
     }
 
     @Override
-    public void cacheAll(Map<? extends K, ? extends V> map) {
-        LOGGER.info(LocalDateTime.now() + " :   Trying to cache multiple objects");
-        storage.putAll(map);
-    }
-
-    @Override
-    public V extract(K key) {
-        LOGGER.info(LocalDateTime.now() + " :   Trying to restore object:   " + key + " from cache");
-        return this.storage.get(key);
+    public synchronized V extract(K key) {
+        LOGGER.info(LocalDateTime.now() + " :   Trying to restore object:   " + key + " from 1 level cache");
+        return storage.get(key);
     }
 
     @Override
@@ -47,20 +50,34 @@ public class MemoryCache<K, V> implements Cache<K, V> {
     }
 
     @Override
-    public void remove(K key) {
-        LOGGER.info(LocalDateTime.now() + " :   Trying to delete object:    " + key + " from cache");
-        storage.remove(key);
-        LOGGER.info(LocalDateTime.now() + " :   Object: " + key + " was deleted successfully from cache");
+    public synchronized void remove(K key) {
+        LOGGER.info(LocalDateTime.now() + " :   Trying to delete object:    " + key + " from 1 level cache");
+        V value = storage.remove(key);
+        if (value != null) {
+            LOGGER.info(LocalDateTime.now() + " :   Deleted object:    key: " + key + " value: " + value + " from 1 " +
+                    "level cache");
+        }
     }
 
     @Override
-    public void clear() {
+    public synchronized void clear() {
         storage.clear();
     }
 
     @Override
     public int size() {
-        LOGGER.info(LocalDateTime.now() + " :   Current cache { " + this.getClass().getSimpleName() + " } size: " + storage.size());
         return storage.size();
+    }
+
+    @Override
+    public synchronized void printCache() {
+        for (Map.Entry<K, V> entry : storage.entrySet()) {
+            LOGGER.info(LocalDateTime.now() + " :   key:    " + entry.getKey() + "  :   value:  " + entry.getValue());
+        }
+    }
+
+    @Override
+    public synchronized boolean isFull() {
+        return size() == cacheSize;
     }
 }
