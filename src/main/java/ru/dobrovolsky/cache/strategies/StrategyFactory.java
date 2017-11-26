@@ -11,11 +11,11 @@ public class StrategyFactory<K> {
     private static final Logger LOGGER = LoggerFactory.getLogger(StrategyFactory.class);
 
     public Strategy<K> getStrategy(String type) {
-        if (Strategies.valueOf(type.toUpperCase()) == Strategies.LEAST_RECENTLY_USED) {
+        if (Strategies.valueOf(type.toUpperCase()) == Strategies.LRU) {
             LOGGER.info(LocalDateTime.now() + " : Creating strategy: " + LeastRecentlyUsed.class.getSimpleName());
             return new LeastRecentlyUsed<>();
         }
-        if (Strategies.valueOf(type.toUpperCase()) == Strategies.LEAST_FREQUENTLY_USED) {
+        if (Strategies.valueOf(type.toUpperCase()) == Strategies.LFU) {
             LOGGER.info(LocalDateTime.now() + " : Creating strategy: " + LeastFrequentlyUsed.class.getSimpleName());
             return new LeastFrequentlyUsed<>();
         }

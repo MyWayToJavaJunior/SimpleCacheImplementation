@@ -2,4 +2,4 @@
 
 mvn clean
 mvn package
-java -jar target/simpleCache.jar
+java -jar target/simpleCache.jar -capacity 3 -strategy LFU

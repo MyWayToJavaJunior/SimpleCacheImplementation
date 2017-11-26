@@ -13,19 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class FileSystemCache<K extends Serializable, V extends Serializable> implements Cache<K, V> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemCache.class);
-    private static final int DEFAULT_CACHE_SIZE = 10;
 
     private Map<K, String> storage;
     private final int cacheSize;
     private final Path tmpDir;
     private final String DIR_NAME = "SimpleCachingSystemTempDir";
-
-    public FileSystemCache() throws IOException {
-        this.cacheSize = DEFAULT_CACHE_SIZE;
-        this.storage = new ConcurrentHashMap<>(this.cacheSize);
-        this.tmpDir = Files.createTempDirectory(DIR_NAME);
-        this.tmpDir.toFile().deleteOnExit();
-    }
 
     public FileSystemCache(int cacheSize) throws IOException {
         this.cacheSize = cacheSize;

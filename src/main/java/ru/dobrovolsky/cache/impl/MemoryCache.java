@@ -11,15 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryCache<K extends Serializable, V extends Serializable> implements Cache<K, V> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemoryCache.class);
-    private static final int DEFAULT_CACHE_SIZE = 10;
 
     private Map<K, V> storage;
     private final int cacheSize;
-
-    public MemoryCache() {
-        this.cacheSize = DEFAULT_CACHE_SIZE;
-        this.storage = new ConcurrentHashMap<>(this.cacheSize);
-    }
 
     public MemoryCache(int cacheSize) {
         this.cacheSize = cacheSize;

@@ -8,3 +8,6 @@ specify the cache strategies and max sizes of level  1 and 2.
     их восстановлением;
     - Реализованы 2 алгоритма кеширования: Least recently used,
     Least-Frequently Used.
+
+## Использование:
+java -jar simpleCache.jar -capacity 3 -strategy LFU

@@ -14,20 +14,29 @@ import java.time.LocalDateTime;
 
 public class CachingSystem<K extends Serializable, V extends Serializable> implements Cache<K, V> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CachingSystem.class);
+    private static final int DEFAULT_CACHE_SIZE = 10;
 
     private MemoryCache<K, V> memoryCache;
     private FileSystemCache<K, V> fileSystemCache;
     private Strategy<K> strategy;
+    private final int cacheSize;
 
     public CachingSystem(int capacity, String strategy) throws IOException {
-        this.memoryCache = new MemoryCache<>(capacity);
-        this.fileSystemCache = new FileSystemCache<>(capacity);
+        if (capacity <= 0) {
+            this.cacheSize = DEFAULT_CACHE_SIZE;
+        } else {
+            this.cacheSize = capacity;
+        }
+
+        this.memoryCache = new MemoryCache<>(this.cacheSize);
+        this.fileSystemCache = new FileSystemCache<>(this.cacheSize);
         this.strategy = new StrategyFactory<K>().getStrategy(strategy);
     }
 
     public CachingSystem() throws IOException {
-        this.memoryCache = new MemoryCache<>();
-        this.fileSystemCache = new FileSystemCache<>();
+        this.cacheSize = DEFAULT_CACHE_SIZE;
+        this.memoryCache = new MemoryCache<>(this.cacheSize);
+        this.fileSystemCache = new FileSystemCache<>(this.cacheSize);
         this.strategy = new StrategyFactory<K>().getStrategy("");
     }
 
