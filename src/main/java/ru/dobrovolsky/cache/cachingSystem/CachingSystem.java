@@ -15,11 +15,10 @@ import java.time.LocalDateTime;
 public class CachingSystem<K extends Serializable, V extends Serializable> implements Cache<K, V> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CachingSystem.class);
     private static final int DEFAULT_CACHE_SIZE = 10;
-
+    private final int cacheSize;
     private MemoryCache<K, V> memoryCache;
     private FileSystemCache<K, V> fileSystemCache;
     private Strategy<K> strategy;
-    private final int cacheSize;
 
     public CachingSystem(int capacity, String strategy) throws IOException {
         if (capacity <= 0) {
