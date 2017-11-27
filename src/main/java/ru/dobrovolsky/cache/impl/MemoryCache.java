@@ -20,7 +20,7 @@ public class MemoryCache<K extends Serializable, V extends Serializable> impleme
     }
 
     @Override
-    public synchronized void cache(K key, V value) {
+    public void cache(K key, V value) {
         LOGGER.info(LocalDateTime.now() + " : Trying to cache object: " + key + " to 1 level cache");
         if (storage.size() < cacheSize) {
             storage.put(key, value);
@@ -32,7 +32,7 @@ public class MemoryCache<K extends Serializable, V extends Serializable> impleme
     }
 
     @Override
-    public synchronized V extract(K key) {
+    public V extract(K key) {
         LOGGER.info(LocalDateTime.now() + " :   Trying to restore object:   " + key + " from 1 level cache");
         return storage.get(key);
     }
@@ -43,7 +43,7 @@ public class MemoryCache<K extends Serializable, V extends Serializable> impleme
     }
 
     @Override
-    public synchronized void remove(K key) {
+    public void remove(K key) {
         LOGGER.info(LocalDateTime.now() + " :   Trying to delete object:    " + key + " from 1 level cache");
         V value = storage.remove(key);
         if (value != null) {
@@ -53,7 +53,7 @@ public class MemoryCache<K extends Serializable, V extends Serializable> impleme
     }
 
     @Override
-    public synchronized void clear() {
+    public void clear() {
         storage.clear();
     }
 
@@ -63,14 +63,14 @@ public class MemoryCache<K extends Serializable, V extends Serializable> impleme
     }
 
     @Override
-    public synchronized void printCache() {
+    public void printCache() {
         for (Map.Entry<K, V> entry : storage.entrySet()) {
             LOGGER.info(LocalDateTime.now() + " :   key:    " + entry.getKey() + "  :   value:  " + entry.getValue());
         }
     }
 
     @Override
-    public synchronized boolean isFull() {
+    public boolean isFull() {
         return size() == cacheSize;
     }
 }

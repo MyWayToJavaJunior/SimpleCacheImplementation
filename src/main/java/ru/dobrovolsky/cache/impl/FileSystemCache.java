@@ -100,7 +100,7 @@ public class FileSystemCache<K extends Serializable, V extends Serializable> imp
     }
 
     @Override
-    public synchronized void clear() throws IOException {
+    public void clear() throws IOException {
         Files.newDirectoryStream(tmpDir, path -> path.toFile().isFile()).forEach(path -> {
             if (path.toFile().delete()) {
                 LOGGER.info(LocalDateTime.now() + " :   Object: " + path.toFile().getName() +
@@ -120,14 +120,14 @@ public class FileSystemCache<K extends Serializable, V extends Serializable> imp
     }
 
     @Override
-    public synchronized void printCache() {
+    public void printCache() {
         for (Map.Entry<K, String> entry : storage.entrySet()) {
             LOGGER.info(LocalDateTime.now() + " :   key:    " + entry.getKey() + "  :   value:  " + entry.getValue());
         }
     }
 
     @Override
-    public synchronized boolean isFull() {
+    public boolean isFull() {
         return size() == cacheSize;
     }
 }

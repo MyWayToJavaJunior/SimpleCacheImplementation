@@ -122,7 +122,7 @@ public class CachingSystem<K extends Serializable, V extends Serializable> imple
     }
 
     @Override
-    public synchronized void clear() throws IOException {
+    public void clear() throws IOException {
         memoryCache.clear();
         fileSystemCache.clear();
         strategy.clear();
